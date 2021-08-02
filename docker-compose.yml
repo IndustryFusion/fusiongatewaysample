@@ -1,0 +1,55 @@
+version: "2.4"
+services:
+  mqttbroker:
+    image: eclipse-mosquitto:2.0.11
+    expose:
+      - 1883
+    volumes:
+      - ./mqttbroker/mosquitto.conf:/mosquitto/config/mosquitto.conf
+  mqttpump:
+    image: mqttpump
+    depends_on:
+      - mqttbroker
+      - mqttdataservice
+  mqttdataservice:
+    image: fusionmqttdataservice
+    volumes:
+      - ./mqttservice/application.yaml:/app/resources/application.yaml
+    depends_on:
+      - scriptservice
+  plcdataservice:
+    image: fusionplcdataservice 
+    volumes:
+      - ./plcservice/application.yaml:/app/resources/application.yaml
+    depends_on:
+      - scriptservice
+  scriptservice:
+    image: fusionscriptservice
+    environment:
+      FUSION_PORT: 8080
+      FUSION_DOWNSTREAM_URL: "http://gatewayapp:8080/"
+      FUSION_DOWNSTREAM_HOST: "gatewayapp"
+    expose:
+      - 8080
+    volumes:
+      - ./script/transform.ts:/deno-dir/transform.ts
+    depends_on:
+      - gatewayapp
+    restart: always
+  gatewayapp:
+    image: fusiongatewayapp
+    expose:
+      - 8080
+    volumes:
+      - ./gatewayapp/application.yaml:/app/resources/application.yaml
+    depends_on:
+      - udpecho
+  udpecho:
+    image: "fusionudpechoserver"
+    environment:
+      PORT: 41234
+    expose:
+      - 41234
+    ports:
+      - "41234:41234"
+
