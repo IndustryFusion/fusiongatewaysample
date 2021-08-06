@@ -13,7 +13,7 @@
 
 fusiondataservice:
   name: My MQTT Service
-  connectionString: tcp://mqttbroker:1883
+  connectionString: tcp://main:mainmain@mqttbroker:1883
   downstreamServiceBaseUrl: http://scriptservice:8080/
   dataServiceType: PUSH
   autorun: true

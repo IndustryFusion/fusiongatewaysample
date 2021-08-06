@@ -18,7 +18,7 @@ do
         }
 EOF
 
-    mosquitto_pub -h mqttbroker -p 1883 -t Gasentnahmestelle -f /tmp/message.json
+    mosquitto_pub -h mqttbroker -p 1883 -u main -P mainmain -t Gasentnahmestelle -f /tmp/message.json
 
     cat /tmp/message.json
 
